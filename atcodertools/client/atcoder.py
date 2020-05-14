@@ -65,7 +65,8 @@ class AtCoderClient(metaclass=Singleton):
         self._session = requests.Session()
 
     def check_logging_in(self):
-        private_url = "https://arc001.contest.atcoder.jp/settings"
+#        private_url = "https://arc001.contest.atcoder.jp/settings"
+        private_url = "https://atcoder.jp/contests/arc001/settings"
         resp = self._request(private_url)
         return resp.url == private_url
 
@@ -89,7 +90,8 @@ class AtCoderClient(metaclass=Singleton):
 
         username, password = credential_supplier()
 
-        resp = self._request("https://arc001.contest.atcoder.jp/login", data={
+#        resp = self._request("https://arc001.contest.atcoder.jp/login", data={
+        resp = self._request("https://atcoder.jp/login", data={
             'name': username,
             "password": password
         }, method='POST')
