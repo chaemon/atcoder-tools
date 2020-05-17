@@ -89,8 +89,10 @@ class AtCoderClient(metaclass=Singleton):
 
         username, password = credential_supplier()
 
-        soup = BeautifulSoup(self._session.get("https://atcoder.jp/login").text, "html.parser")
-        token = soup.find_all("form")[1].find("input", type="hidden").get("value")
+        soup = BeautifulSoup(self._session.get(
+            "https://atcoder.jp/login").text, "html.parser")
+        token = soup.find_all("form")[1].find(
+            "input", type="hidden").get("value")
         resp = self._request("https://atcoder.jp/login", data={
             'username': username,
             "password": password,
@@ -167,12 +169,10 @@ class AtCoderClient(metaclass=Singleton):
         session_id = soup.find("input", attrs={"type": "hidden"}).get("value")
         task_select_area = soup.find(
             'select', attrs={"id": "select-task"})
-        task_field_name = task_select_area.get("name")
         task_number = task_select_area.find(
             "option", text=re.compile('{} -'.format(problem.get_alphabet()))).get("value")
         language_select_area = soup.find(
             'select', attrs={"data-placeholder": "-"})
-        language_field_name = language_select_area.get("name")
         language_number = language_select_area.find(
             "option", text=lang_option_pattern).get("value")
         postdata = {
