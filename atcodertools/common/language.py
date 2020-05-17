@@ -71,9 +71,9 @@ class Language:
 
     @classmethod
     def from_name(cls, name: str):
-        for l in ALL_LANGUAGES:
-            if l.name == name:
-                return l
+        for lang in ALL_LANGUAGES:
+            if lang.name == name:
+                return lang
         raise LanguageNotFoundError(
             "No language support for '{}'".format(ALL_LANGUAGE_NAMES))
 
@@ -117,7 +117,7 @@ RUST = Language(
 
 PYTHON = Language(
     name="python",
-    display_name="Python3",
+    display_name="Python",
     extension="py",
     submission_lang_pattern=re.compile(".*Python3.*|^Python$"),
     default_code_generator=python.main,
