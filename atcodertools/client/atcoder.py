@@ -14,7 +14,7 @@ from atcodertools.common.logging import logger
 from atcodertools.fileutils.artifacts_cache import get_cache_file_path
 from atcodertools.client.models.contest import Contest
 from atcodertools.client.models.problem import Problem
-from atcodertools.client.models.problem_content import ProblemContent, get_problem_content
+from atcodertools.client.models.problem_content import ProblemContent, InputFormatDetectionError, SampleDetectionError
 
 
 class LoginError(Exception):
@@ -65,10 +65,9 @@ class AtCoderClient(metaclass=Singleton):
         self._session = requests.Session()
 
     def check_logging_in(self):
-#        private_url = "https://arc001.contest.atcoder.jp/settings"
-        private_url = "https://atcoder.jp/contests/arc001/settings"
+        private_url = "https://atcoder.jp/home"
         resp = self._request(private_url)
-        return resp.url == private_url
+        return resp.text.find("Sign In") == -1
 
     def login(self,
               credential_supplier=None,
@@ -90,10 +89,12 @@ class AtCoderClient(metaclass=Singleton):
 
         username, password = credential_supplier()
 
-#        resp = self._request("https://arc001.contest.atcoder.jp/login", data={
+        soup = BeautifulSoup(self._session.get("https://atcoder.jp/login").text, "html.parser")
+        token = soup.find_all("form")[1].find("input", type="hidden").get("value")
         resp = self._request("https://atcoder.jp/login", data={
-            'name': username,
-            "password": password
+            'username': username,
+            "password": password,
+            "csrf_token": token
         }, method='POST')
 
         if resp.text.find("パスワードを忘れた方はこちら") != -1:
@@ -106,7 +107,8 @@ class AtCoderClient(metaclass=Singleton):
         resp = self._request(contest.get_problem_list_url())
         soup = BeautifulSoup(resp.text, "html.parser")
         res = []
-        for tag in soup.select('.linkwrapper')[0::2]:
+        for tag in soup.find('table').select('tr')[1::]:
+            tag = tag.find("a")
             alphabet = tag.text
             problem_id = tag.get("href").split("/")[-1]
             res.append(Problem(contest, alphabet, problem_id))
@@ -117,8 +119,12 @@ class AtCoderClient(metaclass=Singleton):
         return resp.text
 
     def download_problem_content(self, problem: Problem) -> ProblemContent:
-        html = self.download_problem_content_raw_html(problem)
-        return get_problem_content(html)
+        resp = self._request(problem.get_url())
+
+        try:
+            return ProblemContent.from_html(resp.text)
+        except (InputFormatDetectionError, SampleDetectionError) as e:
+            raise e
 
     def download_all_contests(self) -> List[Contest]:
         contest_ids = []
@@ -160,25 +166,26 @@ class AtCoderClient(metaclass=Singleton):
         soup = BeautifulSoup(resp.text, "html.parser")
         session_id = soup.find("input", attrs={"type": "hidden"}).get("value")
         task_select_area = soup.find(
-            'select', attrs={"id": "submit-task-selector"})
+            'select', attrs={"id": "select-task"})
         task_field_name = task_select_area.get("name")
         task_number = task_select_area.find(
             "option", text=re.compile('{} -'.format(problem.get_alphabet()))).get("value")
         language_select_area = soup.find(
-            'select', attrs={"id": "submit-language-selector-{}".format(task_number)})
+            'select', attrs={"data-placeholder": "-"})
         language_field_name = language_select_area.get("name")
         language_number = language_select_area.find(
             "option", text=lang_option_pattern).get("value")
         postdata = {
-            "__session": session_id,
-            task_field_name: task_number,
-            language_field_name: language_number,
-            "source_code": source
+            "csrf_token": session_id,
+            "data.TaskScreenName": task_number,
+            "data.LanguageId": language_number,
+            "sourceCode": source
         }
         resp = self._request(
             contest.get_submit_url(),
             data=postdata,
             method='POST')
+
         return Submission.make_submissions_from(resp.text)[0]
 
     def download_submission_list(self, contest: Contest) -> List[Submission]:
