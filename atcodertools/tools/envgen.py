@@ -5,6 +5,7 @@ import shutil
 import sys
 import traceback
 from multiprocessing import Pool, cpu_count
+from os.path import expanduser
 import time
 from typing import Tuple
 
