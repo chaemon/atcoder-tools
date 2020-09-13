@@ -147,7 +147,7 @@ NIM = Language(
     default_code_generator=nim.main,
     default_template_path=get_default_template_path('nim'),
     default_code_style=CodeStyle(indent_width=2),
-    compile_command="nim c -o:{filename} {filename}.nim",
+    compile_command="nim cpp -o:{filename} {filename}.nim",
     test_command="{exec_filename}",
     exec_filename="{filename}{exec_extension}"
 )

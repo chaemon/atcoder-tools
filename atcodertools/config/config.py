@@ -13,6 +13,7 @@ from atcodertools.codegen.code_style_config import CodeStyleConfig, DEFAULT_LANG
 from atcodertools.config.etc_config import EtcConfig
 from atcodertools.config.postprocess_config import PostprocessConfig
 from atcodertools.config.run_config import RunConfig
+from atcodertools.config.submit_config import SubmitConfig
 from atcodertools.tools import get_default_config_path
 from atcodertools.tools.utils import with_color
 
@@ -21,6 +22,8 @@ _POST_PROCESS_CONFIG_KEY = "postprocess"
 _CODE_STYLE_CONFIG_KEY = "codestyle"
 
 _RUN_CONFIG_KEY = "run"
+
+_SUBMIT_CONFIG_KEY = "submit"
 
 
 class ProgramArgs:
@@ -33,7 +36,10 @@ class ProgramArgs:
             save_no_session_cache: Optional[bool] = None,
             lang: Optional[str] = None,
             compile_before_testing: Optional[bool] = None,
-            compile_only_when_diff_detected: Optional[bool] = None
+            compile_only_when_diff_detected: Optional[bool] = None,
+            run_exec_before_submit: Optional[bool] = None,
+            exec_before_submit: Optional[str] = None,
+            submit_filename: Optional[str] = None
     ):
         self.template = template
         self.workspace = workspace
@@ -43,6 +49,9 @@ class ProgramArgs:
         self.lang = lang
         self.compile_before_testing = compile_before_testing
         self.compile_only_when_diff_detected = compile_only_when_diff_detected
+        self.run_exec_before_submit = run_exec_before_submit
+        self.exec_before_submit = exec_before_submit
+        self.submit_filename = submit_filename
 
     @classmethod
     def load(cls, program_args: argparse.Namespace):
@@ -72,12 +81,14 @@ class Config:
                  code_style_config: CodeStyleConfig = CodeStyleConfig(),
                  postprocess_config: PostprocessConfig = PostprocessConfig(),
                  etc_config: EtcConfig = EtcConfig(),
-                 run_config: RunConfig = RunConfig()
+                 run_config: RunConfig = RunConfig(),
+                 submit_config: SubmitConfig = SubmitConfig()
                  ):
         self.code_style_config = code_style_config
         self.postprocess_config = postprocess_config
         self.etc_config = etc_config
         self.run_config = run_config
+        self.submit_config = submit_config
 
     @classmethod
     def load(cls, fp: TextIO, args: Optional[ProgramArgs] = None):
@@ -94,6 +105,7 @@ class Config:
         postprocess_config_dic = config_dic.get(_POST_PROCESS_CONFIG_KEY, {})
         etc_config_dic = config_dic.get('etc', {})
         run_config_dic = config_dic.get(_RUN_CONFIG_KEY, {})
+        submit_config_dic = config_dic.get(_SUBMIT_CONFIG_KEY, {})
         code_style_config_dic = {**common_code_style_config_dic}
 
         # Handle config override strategy in the following code
@@ -126,6 +138,10 @@ class Config:
                 run_config_dic = _update_config_dict(run_config_dic,
                                                      lang_specific_config_dic[_RUN_CONFIG_KEY])
 
+            if _SUBMIT_CONFIG_KEY in lang_specific_config_dic:  # e.g. [cpp.run]
+                submit_config_dic = _update_config_dict(submit_config_dic,
+                                                     lang_specific_config_dic[_SUBMIT_CONFIG_KEY])
+
         if args:
             code_style_config_dic = _update_config_dict(
                 code_style_config_dic,
@@ -147,7 +163,8 @@ class Config:
             code_style_config=CodeStyleConfig(**code_style_config_dic),
             postprocess_config=PostprocessConfig(**postprocess_config_dic),
             etc_config=EtcConfig(**etc_config_dic),
-            run_config=RunConfig(**run_config_dic)
+            run_config=RunConfig(**run_config_dic),
+            submit_config=SubmitConfig(**submit_config_dic),
         )
 
 

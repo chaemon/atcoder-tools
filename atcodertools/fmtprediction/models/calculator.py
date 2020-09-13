@@ -167,6 +167,11 @@ class CalcNode:
 
     @classmethod
     def parse(cls, formula: str):
+        if formula in ["A_1", "A_2", "A_N"]:
+            res = CalcNode()
+            res.content = "A"
+            return res
+
         res, pos = _expr(formula + "$", 0)  # $ is put as a terminal character
         if pos != len(formula):
             raise CalcParseError
