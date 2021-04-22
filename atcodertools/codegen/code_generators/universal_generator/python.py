@@ -58,7 +58,8 @@ class CodeGeneratorInfo:
 
         # 確保と入力
         self.allocate_and_input_seq = "{name} = [{input_func} for _ in range({length})]"
-        self.allocate_and_input_2d_seq = "{name} = [[{input_func} for _ in range({length_j})] for _ in range({length_i})]"
+        self.allocate_and_input_2d_seq = \
+                "{name} = [[{input_func} for _ in range({length_j})] for _ in range({length_i})]"
 
         # 宣言と確保と入力
         self.declare_and_allocate_and_input_seq = self.allocate_and_input_seq + \
