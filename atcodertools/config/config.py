@@ -39,6 +39,7 @@ class ProgramArgs:
             compile_only_when_diff_detected: Optional[bool] = None,
             run_exec_before_submit: Optional[bool] = None,
             exec_before_submit: Optional[str] = None,
+            exec_after_submit: Optional[str] = None,
             submit_filename: Optional[str] = None
     ):
         self.template = template
@@ -51,6 +52,7 @@ class ProgramArgs:
         self.compile_only_when_diff_detected = compile_only_when_diff_detected
         self.run_exec_before_submit = run_exec_before_submit
         self.exec_before_submit = exec_before_submit
+        self.exec_after_submit = exec_after_submit
         self.submit_filename = submit_filename
 
     @classmethod

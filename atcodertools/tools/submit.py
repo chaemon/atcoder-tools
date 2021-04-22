@@ -135,6 +135,8 @@ def main(prog, args, credential_supplier=None, use_local_session_cache=True) -> 
         logger.info("{} {}".format(
             with_color("Done!", Fore.LIGHTGREEN_EX),
             metadata.problem.contest.get_submissions_url(submission)))
+        if config.submit_config.run_exec_before_submit:
+            run_command(config.submit_config.exec_after_submit, "./")
 
 
 if __name__ == "__main__":
