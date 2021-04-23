@@ -6,7 +6,6 @@ from atcodertools.fmtprediction.models.format import Pattern, SingularPattern, P
     Format
 from atcodertools.fmtprediction.models.type import Type
 from atcodertools.fmtprediction.models.variable import Variable
-# TODO why NIM?
 
 
 class CodeGenerator():
