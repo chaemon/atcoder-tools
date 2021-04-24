@@ -12,7 +12,7 @@
 
 AtCoder Tools
 ====
-Python 3.5 以降で動作する [AtCoder](http://atcoder.jp/) からサンプル入力をダウンロードしたりする際に便利なツールです。
+Python 3.6 以降で動作する [AtCoder](http://atcoder.jp/) からサンプル入力をダウンロードしたりする際に便利なツールです。
 
 このツールには次のような機能があります。
 - AtCoderへのログイン，入出力例データなどの抽出
@@ -95,7 +95,7 @@ $ atcoder-tools gen  [contest_id] --without-login
 usage: atcoder-tools gen
        [-h] [--without-login] [--workspace WORKSPACE] [--lang LANG]
        [--template TEMPLATE] [--parallel] [--save-no-session-cache]
-       [--config CONFIG]
+       [--skip-existing-problems] [--config CONFIG]
        contest_id
 
 positional arguments:
@@ -120,6 +120,8 @@ optional arguments:
   --parallel            Prepare problem directories asynchronously using multi processors.
   --save-no-session-cache
                         Save no session cache to avoid security risk
+  --skip-existing-problems
+                        Skip processing every problem for which a directory already exists
   --config CONFIG       File path to your config file
                         [Default (Primary)] /home/kyuridenamida/.atcodertools.toml
                         [Default (Secondary)] /atcoder-tools/atcodertools/tools/atcodertools-default.toml
@@ -281,6 +283,7 @@ optional arguments:
 - `download_without_login=false` AtCoderにログインせずにダウンロードを行う機能を使わない (公開コンテストに対してのみ可能)
 - `parallel_download=false` データの並列ダウンロードを無効にする
 - `save_no_session_cache=false` ログイン情報のクッキーを保存する
+- `skip_existing_problems=false` ディレクトリが既に存在する問題の処理をスキップする
 - `in_example_format="in_{}.txt"` テストケース(input)のフォーマットを`in_1.txt, in_2.txt, ...`とする
 - `out_example_format="out_{}.txt"` テストケース(output)のフォーマットを`out_1.txt, out_2.txt, ...`とする
 - `compile_command="g++ main.cpp -o main.out"` プログラムを`atcoder-tools compile`でコンパイルする場合に実行されるコマンド
@@ -306,6 +309,7 @@ run_command="./main.out"
 download_without_login=false
 parallel_download=false
 save_no_session_cache=false
+skip_existing_problems=false
 in_example_format="in_{}.txt"
 out_example_format="out_{}.txt"
 compile_before_testing=false

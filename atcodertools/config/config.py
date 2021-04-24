@@ -145,21 +145,17 @@ class Config:
                                                      lang_specific_config_dic[_SUBMIT_CONFIG_KEY])
 
         if args:
-            code_style_config_dic = _update_config_dict(
-                code_style_config_dic,
-                dict(template_file=args.template,
-                     workspace_dir=args.workspace)
-            )
-            etc_config_dic = _update_config_dict(
-                etc_config_dic,
-                dict(
-                    download_without_login=args.without_login,
-                    parallel_download=args.parallel,
-                    save_no_session_cache=args.save_no_session_cache,
-                    compile_before_testing=args.compile_before_testing,
-                    compile_only_when_diff_detected=args.compile_only_when_diff_detected
-                )
-            )
+            code_style_config_dic = _update_config_dict(code_style_config_dic,
+                                                        dict(
+                                                            template_file=args.template,
+                                                            workspace_dir=args.workspace,
+                                                            lang=args.lang))
+            etc_config_dic = _update_config_dict(etc_config_dic,
+                                                 dict(
+                                                     download_without_login=args.without_login,
+                                                     parallel_download=args.parallel,
+                                                     save_no_session_cache=args.save_no_session_cache,
+                                                     skip_existing_problems=args.skip_existing_problems))
 
         return Config(
             code_style_config=CodeStyleConfig(**code_style_config_dic),

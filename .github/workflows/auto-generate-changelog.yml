@@ -1,0 +1,34 @@
+name: Update Changelog
+on:
+  workflow_dispatch:
+    inputs:
+      releaseversion:
+        description: 'Specify release version (e.g. 2.0.1)'
+        required: true
+        default: ''
+jobs:
+  generate-changelog:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: "15.x"
+
+      - name: Install packages
+        run: npm install
+        working-directory: ./dev-tools
+
+      - name: Generate CHANGELOG.md
+        run: npm run create-changelog -- --releaseVersion=${{github.event.inputs.releaseversion}}
+        working-directory: ./dev-tools
+
+      - uses: EndBug/add-and-commit@v7.0.0
+        with:
+          author_name: github-actions
+          author_email: 41898282+github-actions[bot]@users.noreply.github.com
