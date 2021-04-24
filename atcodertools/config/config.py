@@ -54,6 +54,7 @@ class ProgramArgs:
         self.exec_before_submit = exec_before_submit
         self.exec_after_submit = exec_after_submit
         self.submit_filename = submit_filename
+        self.skip_existing_problems = False
 
     @classmethod
     def load(cls, program_args: argparse.Namespace):
