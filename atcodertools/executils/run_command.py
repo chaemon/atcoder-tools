@@ -1,4 +1,5 @@
 import subprocess
+import locale
 
 
 def run_command(exec_cmd: str, current_working_dir: str) -> str:
@@ -7,6 +8,7 @@ def run_command(exec_cmd: str, current_working_dir: str) -> str:
                           stdout=subprocess.PIPE,
                           stderr=subprocess.STDOUT,
                           cwd=current_working_dir)
+<<<<<<< HEAD
     return proc.stdout.decode("utf8")
 
 
@@ -17,3 +19,6 @@ def run_command_with_returncode(exec_cmd: str, current_working_dir: str) -> str:
                           stderr=subprocess.STDOUT,
                           cwd=current_working_dir)
     return proc.returncode, proc.stdout.decode("utf8")
+=======
+    return proc.stdout.decode(locale.getpreferredencoding())
+>>>>>>> feature/universal_generator

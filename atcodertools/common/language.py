@@ -1,7 +1,7 @@
 import re
 from typing import Pattern, Callable
 
-from atcodertools.codegen.code_generators import cpp, java, rust, python, nim, d, cs
+from atcodertools.codegen.code_generators import cpp, java, rust, python, nim, d, cs, swift
 from atcodertools.codegen.models.code_gen_args import CodeGenArgs
 from atcodertools.tools.templates import get_default_template_path
 import platform
@@ -164,6 +164,18 @@ CSHARP = Language(
     exec_filename="{filename}{exec_extension}"
 )
 
+SWIFT = Language(
+    name="swift",
+    display_name="Swift",
+    extension="swift",
+    submission_lang_pattern=re.compile("^Swift"),
+    default_code_generator=swift.main,
+    default_template_path=get_default_template_path('swift'),
+    compile_command="swiftc {filename}.cs -o {filename}",
+    test_command="{exec_filename}",
+    exec_filename="{filename}{exec_extension}"
+)
 
-ALL_LANGUAGES = [CPP, JAVA, RUST, PYTHON, NIM, DLANG, CSHARP]
-ALL_LANGUAGE_NAMES = [lang.name for lang in ALL_LANGUAGES]
+
+ALL_LANGUAGES = [CPP, JAVA, RUST, PYTHON, NIM, DLANG, CSHARP, SWIFT]
+ALL_LANGUAGE_NAMES = [lang.display_name for lang in ALL_LANGUAGES]

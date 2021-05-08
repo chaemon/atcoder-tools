@@ -1,41 +1,57 @@
 #include <iostream>
-#include <vector>
+#include <sstream>
+#include <fstream>
 #include <string>
+#include <vector>
+#include <deque>
+#include <queue>
+#include <stack>
+#include <set>
+#include <map>
+#include <algorithm>
+#include <functional>
+#include <utility>
+#include <bitset>
+#include <cmath>
+#include <cstdlib>
+#include <ctime>
+#include <cstdio>
 #include <cassert>
+using namespace std;
 
 {% if mod is not none %}
 const int mod = {{ mod }};
 {% endif %}
 {% if yes_str is not none %}
-const std::string YES = "{{ yes_str }}";
+const string YES = "{{ yes_str }}";
 {% endif %}
 {% if no_str is not none %}
-const std::string NO = "{{ no_str }}";
+const string NO = "{{ no_str }}";
 {% endif %}
 void solve({{ formal_arguments }}){
-    std::cout << N << " " << M << std::endl;
+    cout << N << " " << M << endl;
     assert(H.size() == N - 1);
     for (int i = 0; i < N - 1; i++) {
         assert(H[i].size() == M - 2);
         for (int j = 0; j < M - 2; j++) {
-            std::cout << (j > 0 ? " " : "") << H[i][j];
+            cout << (j > 0 ? " " : "") << H[i][j];
         }
-        std::cout << std::endl;
+        cout << endl;
     }
     assert(A.size() == N - 1);
     assert(B.size() == N - 1);
-    for(int i = 0;i < N - 1;i++){
-        std::cout << A[i] << " " << B[i] << std::endl;
+    for(int i = 0 ; i < N - 1 ; i++){
+        cout << A[i] << " " << B[i] << endl;
     }
-    std::cout << Q << std::endl;
+    cout << Q << endl;
     assert(X.size() == M + Q);
-    for(int i = 0;i < M + Q;i++){
-        std::cout << X[i] << std::endl;
+    for(int i = 0 ; i < M + Q ; i++){
+        cout << X[i] << endl;
     }
 
-    std::cout << YES << std::endl;
-    std::cout << NO << std::endl;
-    std::cout << mod << std::endl;
+    cout << YES << endl;
+    cout << NO << endl;
+    cout << mod << endl;
 
 }
 
