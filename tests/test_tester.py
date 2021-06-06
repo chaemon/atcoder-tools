@@ -15,6 +15,7 @@ from atcodertools.tools.setter import main as setter_main
 from atcodertools.tools.compiler import compile_main_and_judge_programs
 from atcodertools.common.language import ALL_LANGUAGES
 from atcodertools.common.judgetype import MultiSolutionJudge
+import inspect
 
 RESOURCE_DIR = os.path.abspath(os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
@@ -124,6 +125,8 @@ class TestTester(unittest.TestCase):
             setter_main('', ["--lang", lang.name, '-d', test_dir])
             metadata = Metadata.load_from(
                 os.path.join(test_dir, "metadata.json"))
+            metadata.code_filename = "main.{}".format(lang.extension)
+            metadata.lang = lang
             compile_main_and_judge_programs(
                 metadata, force_compile=True, cwd=test_dir)
             for i in [1, 2, 3, 4]:
