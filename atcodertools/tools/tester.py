@@ -392,6 +392,12 @@ def main(prog, args) -> bool:
                         type=bool,
                         default=None)
 
+    parser.add_argument('--compile-command',
+                        help='set compile command'
+                             ' [Default]: None',
+                        type=str,
+                        default=None)
+
     parser.add_argument("--config",
                         help="File path to your config file\n{0}{1}".format("[Default (Primary)] {}\n".format(
                             USER_CONFIG_PATH),
