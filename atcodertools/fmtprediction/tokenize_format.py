@@ -27,6 +27,7 @@ _LATEX_DOTS = ["\\ldots", "\\cdots", "\\dots", "\\vdots", "\\ddots"]
 
 _LATEX_SPACES = ["\\,", "\\;", "\\:", "\\!", "\\quad", "\\qquad"]
 
+
 def _normalize_separators(text: str) -> str:
     """Canonicalize the various ways a separator can be written so that the
     rest of the pipeline only has to deal with plain spaces (and ``…`` for
@@ -41,6 +42,7 @@ def _normalize_separators(text: str) -> str:
     # Full-width space is a regular separator.
     text = text.replace("　", " ")
     return text
+
 
 def _strip_last_coord(name: str, idx) -> str:
     """Drop the trailing coordinate of a variable reference's index.
@@ -66,6 +68,7 @@ def _strip_last_coord(name: str, idx) -> str:
     if len(inner) <= 1:
         return name
     return name + '_{' + inner[:-1] + '}'
+
 
 def _try_collapse_run(line: str, start: int):
     """Try to match a collapsible run of the same variable starting at start.
@@ -116,7 +119,9 @@ def _try_collapse_run(line: str, start: int):
         return _strip_last_coord(name, first_idx), j
     return None
 
+
 _BARE_HEAD = re.compile(r'([A-Za-z])([0-9]+)')
+
 
 def _try_bare_run(line: str, start: int):
     m = _BARE_HEAD.match(line, start)
@@ -161,11 +166,13 @@ def _try_bare_run(line: str, start: int):
         return letter, j
     return None
 
+
 _BARE2D_HEAD = re.compile(
     r'([A-Za-z])(\([^()]*\)|(?:[0-9]+|[A-Za-z])(?:,(?:[0-9]+|[A-Za-z]))+)')
 
 _BARE2D_TAIL_BODY = \
     r'(?:\([^()]*\)|(?:[0-9]+|[A-Za-z])(?:,(?:[0-9]+|[A-Za-z]))+)'
+
 
 def _try_bare_2d_run(line: str, start: int):
     m = _BARE2D_HEAD.match(line, start)
@@ -210,6 +217,7 @@ def _try_bare_2d_run(line: str, start: int):
         return _strip_last_coord(letter, '_' + first_index), j
     return None
 
+
 def _collapse_line(line: str) -> str:
     out = []
     i = 0
@@ -226,7 +234,9 @@ def _collapse_line(line: str) -> str:
             i += 1
     return ''.join(out)
 
+
 _ABSTRACT_REF = re.compile(r'[A-Za-z]+_(?:\{([a-z])\}|([a-z]))$')
+
 
 def _abstract_row_indices(line: str):
     tokens = line.split()
@@ -276,6 +286,7 @@ def _is_abstract_row(
         index not in header_variables
         for index in indices
     )
+
 
 def collapse_string_runs(
     input_format: str,
