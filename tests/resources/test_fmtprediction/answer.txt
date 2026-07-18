@@ -1092,7 +1092,7 @@ abc215-H                                 OK                   [(Singular: N),(Si
 abc216-A                                 No result
 abc216-B                                 No result
 abc216-C                                 OK                   [(Singular: N)] [('N', <class 'int'>)]
-abc216-D                                 No result
+abc216-D                                 OK                   [RaggedRowFormat: prefix=[(Singular: N),(Singular: M)], rows=[RaggedRowPattern: count=M, prefix=k, length_pos=0, values=a], suffix=[]] [('N', <class 'int'>), ('M', <class 'int'>), ('k', <class 'int'>), ('a', <class 'int'>)]
 abc216-E                                 OK                   [(Singular: N),(Singular: K),(Parallel: A | 1 to N)] [('N', <class 'int'>), ('K', <class 'int'>), ('A', <class 'int'>)]
 abc216-F                                 OK                   [(Singular: N),(Parallel: A | 1 to N),(Parallel: B | 1 to N)] [('N', <class 'int'>), ('A', <class 'int'>), ('B', <class 'int'>)]
 abc216-G                                 OK                   [(Singular: N),(Singular: M),(Parallel: L,R,X | 1 to M)] [('N', <class 'int'>), ('M', <class 'int'>), ('L', <class 'int'>), ('R', <class 'int'>), ('X', <class 'int'>)]
@@ -1672,7 +1672,7 @@ abc288-F                                 OK                   [(Singular: N),(Si
 abc288-G                                 OK                   [(Singular: N),(Parallel: A | 0 to 3^N-1)] [('N', <class 'int'>), ('A', <class 'int'>)]
 abc289-A                                 OK                   [(Singular: s)] [('s', <class 'str'>)]
 abc289-B                                 OK                   [(Singular: N),(Singular: M),(Parallel: a | 1 to M)] [('N', <class 'int'>), ('M', <class 'int'>), ('a', <class 'int'>)]
-abc289-C                                 No result
+abc289-C                                 OK                   [RaggedRowFormat: prefix=[(Singular: N),(Singular: M)], rows=[RaggedRowPattern: count=M, prefix=C, length_pos=0, values=a], suffix=[]] [('N', <class 'int'>), ('M', <class 'int'>), ('C', <class 'int'>), ('a', <class 'int'>)]
 abc289-D                                 No result
 abc289-E                                 OK                   [RepeatedCase: prefix=[(Singular: T)], count=T, case=[(Singular: N),(Singular: M),(Parallel: C | 1 to N),(Parallel: u,v | 1 to M)]] [('T', <class 'int'>)]
 abc289-Ex                                OK                   [(Singular: A),(Singular: B),(Singular: C),(Singular: T)] [('A', <class 'int'>), ('B', <class 'int'>), ('C', <class 'int'>), ('T', <class 'int'>)]
@@ -1779,7 +1779,7 @@ abc302-C                                 OK                   [(Singular: N),(Si
 abc302-D                                 OK                   [(Singular: N),(Singular: M),(Singular: D),(Parallel: A | 1 to N),(Parallel: B | 1 to M)] [('N', <class 'int'>), ('M', <class 'int'>), ('D', <class 'int'>), ('A', <class 'int'>), ('B', <class 'int'>)]
 abc302-E                                 No result
 abc302-Ex                                OK                   [(Singular: N),(Parallel: A,B | 1 to N),(Parallel: U,V | 1 to N-1)] [('N', <class 'int'>), ('A', <class 'int'>), ('B', <class 'int'>), ('U', <class 'int'>), ('V', <class 'int'>)]
-abc302-F                                 No result
+abc302-F                                 OK                   [RaggedRowFormat: prefix=[(Singular: N),(Singular: M)], rows=[RaggedRowPattern: count=N, prefix=A, length_pos=0, values=S], suffix=[]] [('N', <class 'int'>), ('M', <class 'int'>), ('A', <class 'int'>), ('S', <class 'int'>)]
 abc302-G                                 OK                   [(Singular: N),(Parallel: A | 1 to N)] [('N', <class 'int'>), ('A', <class 'int'>)]
 abc303-A                                 OK                   [(Singular: N),(Singular: S),(Singular: T)] [('N', <class 'int'>), ('S', <class 'str'>), ('T', <class 'str'>)]
 abc303-B                                 OK                   [(Singular: N),(Singular: M),(TwoDimensional: a)] [('N', <class 'int'>), ('M', <class 'int'>), ('a', <class 'int'>)]
@@ -1869,7 +1869,7 @@ abc313-Ex                                OK                   [(Singular: N),(Pa
 abc313-F                                 OK                   [(Singular: N),(Singular: M),(Parallel: A,B | 1 to N),(Parallel: X,Y | 1 to M)] [('N', <class 'int'>), ('M', <class 'int'>), ('A', <class 'int'>), ('B', <class 'int'>), ('X', <class 'int'>), ('Y', <class 'int'>)]
 abc313-G                                 OK                   [(Singular: N),(Parallel: a | 1 to N)] [('N', <class 'int'>), ('a', <class 'int'>)]
 abc314-A                                 OK                   [(Singular: N)] [('N', <class 'int'>)]
-abc314-B                                 No result
+abc314-B                                 OK                   [RaggedRowFormat: prefix=[(Singular: N)], rows=[RaggedRowPattern: count=N, prefix=C, length_pos=0, values=A], suffix=[(Singular: X)]] [('N', <class 'int'>), ('C', <class 'int'>), ('A', <class 'int'>), ('X', <class 'int'>)]
 abc314-C                                 OK                   [(Singular: N),(Singular: M),(Singular: S),(Parallel: C | 1 to N)] [('N', <class 'int'>), ('M', <class 'int'>), ('S', <class 'str'>), ('C', <class 'int'>)]
 abc314-D                                 No result
 abc314-E                                 No result
@@ -2789,7 +2789,7 @@ abc445-E                                 OK                   [RepeatedCase: pre
 abc445-F                                 No result
 abc445-G                                 No result
 abc446-A                                 OK                   [(Singular: S)] [('S', <class 'str'>)]
-abc446-B                                 No result
+abc446-B                                 OK                   [RaggedRowFormat: prefix=[(Singular: N),(Singular: M)], rows=[RaggedRowPattern: count=N, prefix=L, length_pos=0, values=X], suffix=[]] [('N', <class 'int'>), ('M', <class 'int'>), ('L', <class 'int'>), ('X', <class 'int'>)]
 abc446-C                                 OK                   [RepeatedCase: prefix=[(Singular: T)], count=T, case=[(Singular: N),(Singular: D),(Parallel: A | 1 to N),(Parallel: B | 1 to N)]] [('T', <class 'int'>)]
 abc446-D                                 OK                   [(Singular: N),(Parallel: A | 1 to N)] [('N', <class 'int'>), ('A', <class 'int'>)]
 abc446-E                                 OK                   [(Singular: M),(Singular: A),(Singular: B)] [('M', <class 'int'>), ('A', <class 'int'>), ('B', <class 'int'>)]
