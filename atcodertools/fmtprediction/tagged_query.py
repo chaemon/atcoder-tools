@@ -263,6 +263,7 @@ _NUMERIC_FALLBACK_SYMBOL_TAGS = {
     "!",
 }
 
+
 def _extract_numeric_fallback_variant_definition_candidates(
     blocks: Sequence[str],
 ) -> Tuple[Tuple[_VariantDefinition, ...], ...]:
@@ -430,6 +431,7 @@ def _extract_numeric_fallback_variant_definition_candidates(
 
     return tuple(candidates)
 
+
 def _sample_input_text(sample) -> str:
     for name in (
         "input",
@@ -481,6 +483,7 @@ def _sample_input_text(sample) -> str:
 
     values.sort()
     return values[0][2]
+
 
 def _exact_sample_query_rows(
     sample_text: str,
@@ -539,6 +542,7 @@ def _exact_sample_query_rows(
 
     return candidates[0]
 
+
 def _numeric_fallback_candidate_sample_compatibility(
     definitions,
     samples,
@@ -587,6 +591,7 @@ def _numeric_fallback_candidate_sample_compatibility(
         observed_tags
         == set(definitions_by_tag)
     )
+
 
 def _extract_sample_numeric_variant_definition_candidate(
     samples,
@@ -673,6 +678,7 @@ def _extract_sample_numeric_variant_definition_candidate(
         )
         for tag in tags
     )
+
 
 def _extract_variant_definitions(
     blocks: Sequence[str],
