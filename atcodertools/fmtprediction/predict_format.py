@@ -46,6 +46,10 @@ from atcodertools.fmtprediction.query_ir_producer_seams import (
 from atcodertools.fmtprediction.query_block_splice import (
     splice_query_definition_block,
 )
+from atcodertools.fmtprediction.query_identifier_alias import (
+    encode_spliced_query_identifiers,
+    restore_identifier_aliases,
+)
 
 
 MAX_SAMPLE_CASE_COUNT = 100000
@@ -1296,13 +1300,31 @@ def _predict_tagged_query_format(
 def _predict_spliced_query_format(
     content: ProblemContent,
 ) -> FormatPredictionResult:
-    """クエリ行の書式が別ブロックにある形式を、展開して通常経路で予測する。"""
+    """Predict a query-block format through the ordinary format path."""
     spliced = splice_query_definition_block(content)
 
     if spliced is None:
         raise NoPredictionResultError
 
-    return _predict_single_case(spliced)
+    encoded, alias_to_original = (
+        encode_spliced_query_identifiers(
+            spliced
+        )
+    )
+
+    result = _predict_single_case(encoded)
+
+    if not alias_to_original:
+        return result
+
+    restored_format = restore_identifier_aliases(
+        result.format,
+        alias_to_original,
+    )
+
+    return FormatPredictionResult(
+        restored_format
+    )
 
 
 _SINGLE_CASE_PREDICTORS = (
