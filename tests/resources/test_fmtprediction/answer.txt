@@ -2582,7 +2582,7 @@ abc416-A                                 OK                   [(Singular: N),(Si
 abc416-B                                 OK                   [(Singular: S)] [('S', <class 'str'>)]
 abc416-C                                 OK                   [(Singular: N),(Singular: K),(Singular: X),(Parallel: S | 1 to N)] [('N', <class 'int'>), ('K', <class 'int'>), ('X', <class 'int'>), ('S', <class 'str'>)]
 abc416-D                                 OK                   [RepeatedCase: prefix=[(Singular: T)], count=T, case=[(Singular: N),(Singular: M),(Parallel: A | 1 to N),(Parallel: B | 1 to N)]] [('T', <class 'int'>)]
-abc416-E                                 No result
+abc416-E                                 OK                   [TaggedQueryFormat: prefix=[(Singular: N),(Singular: M),(Parallel: A,B,C | 1 to M),(Singular: K),(Singular: T),(Parallel: D | 1 to K),(Singular: Q)], count=Q, variants=1:['int', 'int', 'int'],2:['int'],3:[]] [('N', <class 'int'>), ('M', <class 'int'>), ('A', <class 'int'>), ('B', <class 'int'>), ('C', <class 'int'>), ('K', <class 'int'>), ('T', <class 'int'>), ('D', <class 'int'>), ('Q', <class 'int'>)]
 abc416-F                                 OK                   [(Singular: N),(Singular: K),(Parallel: A | 1 to N),(Parallel: U,V | 1 to N-1)] [('N', <class 'int'>), ('K', <class 'int'>), ('A', <class 'int'>), ('U', <class 'int'>), ('V', <class 'int'>)]
 abc416-G                                 OK                   [(Singular: N),(Singular: K),(Parallel: S | 1 to N)] [('N', <class 'int'>), ('K', <class 'int'>), ('S', <class 'str'>)]
 abc417-A                                 OK                   [(Singular: N),(Singular: A),(Singular: B),(Singular: S)] [('N', <class 'int'>), ('A', <class 'int'>), ('B', <class 'int'>), ('S', <class 'str'>)]
@@ -5711,7 +5711,7 @@ joisp2025-G                              OK                   [(Singular: N),(Si
 joisp2025-H                              OK                   [(Singular: N),(Singular: S),(Singular: Q),(Parallel: X,Y,Z | 1 to Q)] [('N', <class 'int'>), ('S', <class 'str'>), ('Q', <class 'int'>), ('X', <class 'int'>), ('Y', <class 'int'>), ('Z', <class 'int'>)]
 joisp2025-I                              OK                   [(Singular: N)] [('N', <class 'int'>)]
 joisp2025-J                              OK                   [(Singular: N),(Singular: R),(Parallel: U,V | 0 to N-1),(Singular: T)] [('N', <class 'int'>), ('R', <class 'int'>), ('U', <class 'int'>), ('V', <class 'int'>), ('T', <class 'str'>)]
-joisp2025-K                              No result
+joisp2025-K                              OK                   [TaggedQueryFormat: prefix=[(Singular: N),(Parallel: P | 2 to N),(Parallel: K | 1 to N),(Singular: Q)], count=Q, variants=1:['int', 'int'],2:['int', 'int'],3:['int']] [('N', <class 'int'>), ('P', <class 'int'>), ('K', <class 'int'>), ('Q', <class 'int'>)]
 joisp2025-L                              OK                   [(Singular: N),(Parallel: A | 1 to N),(Singular: Q),(Parallel: L,R | 1 to Q)] [('N', <class 'int'>), ('A', <class 'int'>), ('Q', <class 'int'>), ('L', <class 'int'>), ('R', <class 'int'>)]
 jrex2017-A                               OK                   [(Singular: N),(Parallel: A,B | 1 to N)] [('N', <class 'int'>), ('A', <class 'int'>), ('B', <class 'int'>)]
 jrex2017-B                               OK                   [(Singular: N),(Parallel: a | 2 to N)] [('N', <class 'int'>), ('a', <class 'int'>)]
@@ -6539,7 +6539,7 @@ past201912-open-D                        OK                   [(Singular: N),(Pa
 past201912-open-E                        No result
 past201912-open-F                        OK                   [(Singular: S)] [('S', <class 'str'>)]
 past201912-open-G                        No result
-past201912-open-H                        No result
+past201912-open-H                        OK                   [TaggedQueryFormat: prefix=[(Singular: N),(Parallel: C | 1 to N),(Singular: Q)], count=Q, variants=1:['int', 'int'],2:['int'],3:['int']] [('N', <class 'int'>), ('C', <class 'int'>), ('Q', <class 'int'>)]
 past201912-open-I                        OK                   [(Singular: N),(Singular: M),(Parallel: S,C | 1 to M)] [('N', <class 'int'>), ('M', <class 'int'>), ('S', <class 'str'>), ('C', <class 'int'>)]
 past201912-open-J                        OK                   [(Singular: H),(Singular: W),(TwoDimensional: A)] [('H', <class 'int'>), ('W', <class 'int'>), ('A', <class 'int'>)]
 past201912-open-K                        OK                   [(Singular: N),(Parallel: p | 1 to N),(Singular: Q),(Parallel: a,b | 1 to Q)] [('N', <class 'int'>), ('p', <class 'int'>), ('Q', <class 'int'>), ('a', <class 'int'>), ('b', <class 'int'>)]
