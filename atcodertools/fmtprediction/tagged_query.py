@@ -5,7 +5,7 @@ from atcodertools.fmtprediction.query_ir_producer_seams import (
 from dataclasses import dataclass
 import html
 import re
-from typing import Dict, List, Sequence, Set, Tuple
+from typing import Dict, List, Sequence, Set, Tuple, Union
 
 from atcodertools.client.models.problem_content import (
     ProblemContent,
@@ -252,6 +252,428 @@ def _line_segments(
     return segments
 
 
+_NUMERIC_FALLBACK_TOKEN_PATTERN = re.compile(
+    r"[A-Za-z][A-Za-z0-9_]*|[+-]?\d+|[+?!-]"
+)
+
+_NUMERIC_FALLBACK_SYMBOL_TAGS = {
+    "+",
+    "-",
+    "?",
+    "!",
+}
+
+def _extract_numeric_fallback_variant_definition_candidates(
+    blocks: Sequence[str],
+) -> Tuple[Tuple[_VariantDefinition, ...], ...]:
+    if any(
+        not isinstance(block, str)
+        for block in blocks
+    ):
+        raise NoTaggedQueryPredictionError
+
+    def extract(
+        candidate_blocks: Sequence[str],
+        legacy_numeric: bool,
+    ) -> Tuple[_VariantDefinition, ...]:
+        by_tag: Dict[
+            Union[int, str],
+            List[Tuple[str, ...]],
+        ] = {}
+
+        for block in candidate_blocks:
+            for segment in _line_segments(block):
+                semantic_tokens = (
+                    _NUMERIC_FALLBACK_TOKEN_PATTERN.findall(
+                        segment
+                    )
+                )
+                if not semantic_tokens:
+                    continue
+
+                first = semantic_tokens[0]
+                if legacy_numeric:
+                    if not _INTEGER_PATTERN.fullmatch(
+                        first
+                    ):
+                        continue
+                    tag: Union[int, str] = int(first)
+                    if not 1 <= tag <= 3:
+                        continue
+                    max_arguments = 3
+                else:
+                    if _INTEGER_PATTERN.fullmatch(first):
+                        tag = int(first)
+                        if not 0 <= tag <= 9:
+                            continue
+                    elif first in _NUMERIC_FALLBACK_SYMBOL_TAGS:
+                        tag = first
+                    elif (
+                        re.fullmatch(
+                            r"[A-Z][A-Z0-9_]{1,23}",
+                            first,
+                        )
+                        is not None
+                        and first.lower()
+                        not in _PLACEHOLDER_BASES
+                        and first.lower()
+                        not in _RESERVED_NAMES
+                    ):
+                        tag = first
+                    else:
+                        continue
+                    max_arguments = 6
+
+                if _COMPARISON_PATTERN.search(
+                    segment
+                ):
+                    continue
+
+                arguments = tuple(
+                    semantic_tokens[1:]
+                )
+                if len(arguments) > max_arguments:
+                    continue
+                if not all(
+                    _IDENTIFIER_PATTERN.fullmatch(
+                        argument
+                    )
+                    is not None
+                    for argument in arguments
+                ):
+                    continue
+
+                by_tag.setdefault(
+                    tag,
+                    [],
+                ).append(arguments)
+
+        if legacy_numeric:
+            if not 2 <= len(by_tag) <= 3:
+                raise NoTaggedQueryPredictionError
+            tags = sorted(by_tag)
+            if tags != list(
+                range(
+                    1,
+                    tags[-1] + 1,
+                )
+            ):
+                raise NoTaggedQueryPredictionError
+        else:
+            if not 2 <= len(by_tag) <= 8:
+                raise NoTaggedQueryPredictionError
+            raw_tags = list(by_tag)
+            if len({type(tag) for tag in raw_tags}) != 1:
+                raise NoTaggedQueryPredictionError
+            tags = sorted(raw_tags)
+            if isinstance(tags[0], int):
+                expected_start = tags[0]
+                if expected_start not in {0, 1}:
+                    raise NoTaggedQueryPredictionError
+                if tags != list(
+                    range(
+                        expected_start,
+                        tags[-1] + 1,
+                    )
+                ):
+                    raise NoTaggedQueryPredictionError
+
+        definitions = []
+        for tag in tags:
+            unique_arguments = set(
+                by_tag[tag]
+            )
+            if len(unique_arguments) != 1:
+                raise NoTaggedQueryPredictionError
+            definitions.append(
+                _VariantDefinition(
+                    tag=tag,
+                    argument_names=next(
+                        iter(unique_arguments)
+                    ),
+                )
+            )
+        return tuple(definitions)
+
+    attempts = [(blocks, True)]
+    if len(blocks) > 1:
+        attempts.append((blocks[1:], False))
+    attempts.append((blocks, False))
+
+    candidates = []
+    seen = set()
+
+    for candidate_blocks, legacy_numeric in attempts:
+        try:
+            definitions = extract(
+                candidate_blocks,
+                legacy_numeric,
+            )
+        except NoTaggedQueryPredictionError:
+            continue
+
+        signature = tuple(
+            (
+                definition.tag,
+                definition.argument_names,
+            )
+            for definition in definitions
+        )
+        if signature in seen:
+            continue
+
+        seen.add(signature)
+        candidates.append(definitions)
+
+    if not candidates:
+        raise NoTaggedQueryPredictionError
+
+    return tuple(candidates)
+
+def _sample_input_text(sample) -> str:
+    for name in (
+        "input",
+        "input_data",
+        "stdin",
+        "source",
+    ):
+        if not hasattr(sample, name):
+            continue
+
+        value = getattr(sample, name)
+        if isinstance(value, str):
+            return value
+
+    values = []
+
+    try:
+        items = vars(sample).items()
+    except TypeError:
+        items = ()
+
+    for name, value in items:
+        if not isinstance(value, str):
+            continue
+
+        if (
+            "\n" not in value
+            and name.lower()
+            not in {
+                "input",
+                "stdin",
+                "source",
+            }
+        ):
+            continue
+
+        values.append(
+            (
+                0
+                if "input" in name.lower()
+                else 1,
+                name,
+                value,
+            )
+        )
+
+    if not values:
+        raise NoTaggedQueryPredictionError
+
+    values.sort()
+    return values[0][2]
+
+def _exact_sample_query_rows(
+    sample_text: str,
+):
+    import re
+
+    integer_pattern = re.compile(
+        r"^[+-]?\d+$"
+    )
+    lines = [
+        line.strip()
+        for line in sample_text.splitlines()
+        if line.strip()
+    ]
+    token_lines = [
+        line.split()
+        for line in lines
+    ]
+    candidates = []
+
+    for index in range(
+        min(6, len(token_lines))
+    ):
+        tokens = token_lines[index]
+
+        if (
+            len(tokens) != 1
+            or not integer_pattern.fullmatch(
+                tokens[0]
+            )
+        ):
+            continue
+
+        query_count = int(tokens[0])
+
+        if query_count <= 0:
+            continue
+
+        remaining = token_lines[
+            index + 1:
+        ]
+
+        if len(remaining) != query_count:
+            continue
+
+        candidates.append(
+            (
+                index,
+                query_count,
+                remaining,
+            )
+        )
+
+    if len(candidates) != 1:
+        raise NoTaggedQueryPredictionError
+
+    return candidates[0]
+
+def _numeric_fallback_candidate_sample_compatibility(
+    definitions,
+    samples,
+):
+    definitions_by_tag = {
+        str(definition.tag): definition
+        for definition in definitions
+    }
+    observed_tags = set()
+
+    for sample in samples:
+        try:
+            _, _, rows = (
+                _exact_sample_query_rows(
+                    _sample_input_text(sample)
+                )
+            )
+        except Exception:
+            # This filter is optional. If an exact one-row
+            # query window cannot be proved, preserve the
+            # existing candidate unchanged.
+            return None
+
+        for row in rows:
+            if not row:
+                return False
+
+            tag = row[0]
+            definition = (
+                definitions_by_tag.get(tag)
+            )
+            if definition is None:
+                return False
+
+            if (
+                len(row) - 1
+                != len(
+                    definition.argument_names
+                )
+            ):
+                return False
+
+            observed_tags.add(tag)
+
+    return (
+        observed_tags
+        == set(definitions_by_tag)
+    )
+
+def _extract_sample_numeric_variant_definition_candidate(
+    samples,
+):
+    arities_by_tag = {}
+
+    for sample in samples:
+        try:
+            _, _, rows = (
+                _exact_sample_query_rows(
+                    _sample_input_text(sample)
+                )
+            )
+        except Exception:
+            raise NoTaggedQueryPredictionError
+
+        for row in rows:
+            if not row:
+                raise NoTaggedQueryPredictionError
+
+            raw_tag = row[0]
+            if (
+                _INTEGER_PATTERN.fullmatch(
+                    raw_tag
+                )
+                is None
+            ):
+                raise NoTaggedQueryPredictionError
+
+            tag = int(raw_tag)
+            if not 0 <= tag <= 9:
+                raise NoTaggedQueryPredictionError
+
+            arities_by_tag.setdefault(
+                tag,
+                set(),
+            ).add(
+                len(row) - 1
+            )
+
+    tags = sorted(arities_by_tag)
+    if not 2 <= len(tags) <= 8:
+        raise NoTaggedQueryPredictionError
+
+    if tags[0] not in {0, 1}:
+        raise NoTaggedQueryPredictionError
+
+    if tags != list(
+        range(
+            tags[0],
+            tags[-1] + 1,
+        )
+    ):
+        raise NoTaggedQueryPredictionError
+
+    if any(
+        len(arities_by_tag[tag]) != 1
+        for tag in tags
+    ):
+        raise NoTaggedQueryPredictionError
+
+    arity_by_tag = {
+        tag: next(
+            iter(arities_by_tag[tag])
+        )
+        for tag in tags
+    }
+
+    if len(set(arity_by_tag.values())) < 2:
+        # Equal-width numeric rows belong to the
+        # homogeneous-query lane instead.
+        raise NoTaggedQueryPredictionError
+
+    return tuple(
+        _VariantDefinition(
+            tag=tag,
+            argument_names=tuple(
+                "arg{}".format(position)
+                for position in range(
+                    1,
+                    arity_by_tag[tag] + 1,
+                )
+            ),
+        )
+        for tag in tags
+    )
+
 def _extract_variant_definitions(
     blocks: Sequence[str],
 ) -> Tuple[_VariantDefinition, ...]:
@@ -342,6 +764,34 @@ def _extract_variant_definitions(
         )
 
     return tuple(definitions)
+
+
+def _extract_variant_definitions_with_numeric_sample_fallback(
+        blocks: Sequence[str],
+        samples,
+) -> Tuple[_VariantDefinition, ...]:
+    try:
+        return _extract_variant_definitions(blocks)
+    except NoTaggedQueryPredictionError:
+        pass
+
+    candidates = (
+        _extract_numeric_fallback_variant_definition_candidates(
+            blocks,
+        )
+    )
+    if any(
+            _numeric_fallback_candidate_sample_compatibility(
+                definitions,
+                samples,
+            ) is not False
+            for definitions in candidates
+    ):
+        raise NoTaggedQueryPredictionError
+
+    return _extract_sample_numeric_variant_definition_candidate(
+        samples,
+    )
 
 
 def _query_count_candidates(
@@ -664,9 +1114,7 @@ def predict_tagged_queries(
         raise NoTaggedQueryPredictionError
 
     definitions = (
-        _extract_variant_definitions(
-            blocks
-        )
+        _extract_variant_definitions_with_numeric_sample_fallback(blocks, samples)
     )
 
     query_count_candidates = (
